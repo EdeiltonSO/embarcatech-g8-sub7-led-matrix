@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 
-#include "blink.pio.h"
+// #include "blink.pio.h"
 
 #define BUZZER_PIN 21
 
