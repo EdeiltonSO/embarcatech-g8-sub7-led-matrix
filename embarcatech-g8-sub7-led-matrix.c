@@ -7,6 +7,8 @@
 
 #define BUZZER_PIN 21
 
+#define OUT_PIN 10
+
 const uint PIN_COLUMNS[] = {5, 4, 3, 2};
 const uint PINS_ROWS[] = {9, 8, 7, 6};
 
