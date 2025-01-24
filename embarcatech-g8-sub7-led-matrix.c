@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
+#include "pico/bootrom.h"
 
 // #include "blink.pio.h"
 
@@ -33,6 +34,7 @@ void all_leds_off();
 void buzzer_init();
 void buzzer_on();
 void buzzer_off();
+void bootsel_mode();
 
 void inicializarTeclado();
 char verificarPinosAtivos();
@@ -144,7 +146,7 @@ void mapearTeclado(char *caractere) {
             all_leds_white();
             break;
         case '*':
-            // modo bootsel
+            bootsel_mode();
             break;
         default:
             break;
@@ -196,4 +198,9 @@ void buzzer_on() {
 }
 void buzzer_off() {
     // desligar buzzer
+}
+
+void bootsel_mode() {
+    printf("*** Entrando em modo BOOTSEL ***");
+    reset_usb_boot(0, 0);
 }
