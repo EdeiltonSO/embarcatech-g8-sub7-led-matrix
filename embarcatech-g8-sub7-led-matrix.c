@@ -186,6 +186,10 @@ void buzzer_init() {
     gpio_put(BUZZER_PIN, 0);
 }
 
+void play_buzzer(uint32_t frequency, uint32_t duration_ms) {
+    // implementar som do buzzer na frequência frequency e durante duration_ms milissegundos
+}
+
 uint32_t matrix_rgb(double r, double g, double b){
     unsigned char R, G, B;
     R = r * 255;
