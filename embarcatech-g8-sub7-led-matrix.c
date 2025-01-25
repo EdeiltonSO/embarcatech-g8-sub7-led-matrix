@@ -30,7 +30,7 @@ void key4_animation();
 void key5_animation();
 void key6_animation();
 
-void all_leds_blue();
+void all_leds_blue(PIO *pio,uint *sm);
 void all_leds_red();
 void all_leds_green();
 void all_leds_white(PIO pio, uint sm);
@@ -107,7 +107,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             key1_animation();
             break;
         case '2':
-            key2_animation();
+            key2_animation(&pio,&sm);
             break;
         case '3':
             key3_animation();
@@ -125,7 +125,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_off();
             break;
         case 'B':
-            all_leds_blue();
+            all_leds_blue(&pio,&sm);
             break;
         case 'C':
             all_leds_red();
@@ -147,8 +147,125 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
 void key1_animation() {
     // implementar animação da tecla 1
 }
-void key2_animation() {
-    // implementar animação da tecla 2
+//Função específica da 2° animação
+void resetTransitionFrame(double matrix[5][5], const uint *FRAME_DIMENSION)
+{
+    for (int i = 0; i < *FRAME_DIMENSION; i++)
+    {
+        for (int j = 0; j < *FRAME_DIMENSION; j++)
+        {
+            matrix[i][j] = 0.0;
+        }
+    }
+}
+//Animação de uma contagem de 1 a 9
+void key2_animation( PIO *pio, uint *sm) {
+    const uint DRAWS = 10, FRAME_DIMENSION = 5;
+
+    double animate[10][5][5] = {
+
+// Matriz responsável por receber os padrões que representarão as transições entre desenhos
+        {{0.0, 0.0, 0.0, 0.0, 0.0},
+         {0.0, 0.0, 0.0, 0.0, 0.0},
+         {0.0, 0.0, 0.0, 0.0, 0.0},
+         {0.0, 0.0, 0.0, 0.0, 0.0},
+         {0.0, 0.0, 0.0, 0.0, 0.0}},
+///////////////////////////////////////////////////////////////////
+
+// Desenhos que serão usados nos padões de leds
+        {{0.0, 0.0, 1.0, 0.0, 0.0},
+         {0.0, 1.0, 1.0, 0.0, 0.0},
+         {1.0, 0.0, 1.0, 0.0, 0.0},
+         {0.0, 0.0, 1.0, 0.0, 0.0},
+         {0.0, 0.0, 1.0, 0.0, 0.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 1.0},
+         {1.0, 0.0, 0.0, 1.0, 0.0},
+         {0.0, 0.0, 1.0, 0.0, 0.0},
+         {0.0, 1.0, 0.0, 0.0, 0.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 1.0},
+         {0.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0},
+         {0.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0}},
+
+        {{1.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0},
+         {0.0, 0.0, 0.0, 0.0, 1.0},
+         {0.0, 0.0, 0.0, 0.0, 1.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 1.0},
+         {1.0, 0.0, 0.0, 0.0, 0.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0},
+         {0.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 0.0},
+         {1.0, 0.0, 0.0, 0.0, 0.0},
+         {1.0, 1.0, 1.0, 1.0, 0.0},
+         {1.0, 0.0, 0.0, 1.0, 0.0},
+         {1.0, 1.0, 1.0, 1.0, 0.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 1.0},
+         {1.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0},
+         {1.0, 0.0, 0.0, 0.0, 1.0},
+         {1.0, 1.0, 1.0, 1.0, 1.0}},
+
+        {{1.0, 1.0, 1.0, 1.0, 0.0},
+         {1.0, 0.0, 0.0, 1.0, 0.0},
+         {1.0, 1.0, 1.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0},
+         {0.0, 0.0, 0.0, 1.0, 0.0}},
+///////////////////////////////////////////////////////////////////
+    };
+
+    // Laço resposável por percorrer todos os desenhos
+    for (int i = 0; i < DRAWS; i++)
+    {
+        // Função usada para resetar a matriz de trasição entre desenhos
+        resetTransitionFrame(animate[0], &FRAME_DIMENSION);
+
+        // Liga os Leds no padrão do do desenho representado na matriz
+        for (int j = 0; j < FRAME_DIMENSION; j++)
+        {
+            for (int k = 0; k < FRAME_DIMENSION; k++)
+            {
+                // Envia as informações de cor e intensidade do led para a maquina de estado
+                pio_sm_put_blocking(*pio, *sm, matrix_rgb(animate[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
+            }
+        }
+        // Mantém a matriz de leds com o padrão do desenho por 1 segundo
+        sleep_ms(1000);
+
+        // Atualiza os valores da matriz de trasição
+        for (int col = FRAME_DIMENSION - 1; col >= 0; col--)
+        {
+            for (int row = FRAME_DIMENSION - 1; row >= 0; row--)
+            {
+                animate[0][row][col] = 1.0;
+            }
+
+            for (int j = 0; j < FRAME_DIMENSION; j++)
+            {
+                for (int k = 0; k < FRAME_DIMENSION; k++)
+                {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(animate[0][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
+                }
+            }
+            //Mantém o padrão de leds aceso por 0.1 segundo antes de mudar para o próximo estado da trasição
+            sleep_ms(100);
+        }
+    }
 }
 void key3_animation() {
     // implementar animação da tecla 3
@@ -163,8 +280,11 @@ void key6_animation() {
     // implementar animação da tecla 6
 }
 
-void all_leds_blue() {
-    // ligar todos os LEDs da matriz na cor AZUL com 100% de intensidade
+void all_leds_blue(PIO *pio,uint *sm) {
+    for (int i = NUM_PIXELS; i >= 0; i--)
+    {
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 1.0));
+    }
 }
 void all_leds_red() {
     // ligar todos os LEDs da matriz na cor VERMELHA com 80% de intensidade
