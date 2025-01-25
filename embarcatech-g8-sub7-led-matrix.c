@@ -33,7 +33,7 @@ void key6_animation();
 void all_leds_blue();
 void all_leds_red();
 void all_leds_green();
-void all_leds_white(PIO Pio, uint sm);
+void all_leds_white(PIO pio, uint sm);
 void all_leds_off();
 
 void buzzer_init();
