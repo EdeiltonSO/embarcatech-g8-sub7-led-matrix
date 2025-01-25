@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
+#include "hardware/clocks.h"
 #include "pico/bootrom.h"
 
 #include "blink.pio.h"
@@ -59,7 +60,7 @@ int main()
     // Configurações da PIO
     uint offset = pio_add_program(pio, &blink_program);
     uint sm = pio_claim_unused_sm(pio, true);
-    pio_blink_init(pio, sm, offset, OUT_PIN);
+    blink_program_init(pio, sm, offset, OUT_PIN);
 
     while (true) {
         char c = '\0';
@@ -88,7 +89,7 @@ void inicializarTeclado() {
 char verificarPinosAtivos() {
     for (int i = 0; i < 4; i++) {
         gpio_put(PINS_ROWS[i], 1);
-      
+
         for (int j = 0; j < 4; j++) {
             if (gpio_get(PIN_COLUMNS[j])) {
                 gpio_put(PINS_ROWS[i], 0);
@@ -173,6 +174,7 @@ void all_leds_green() {
 }
 void all_leds_white() {
     // ligar todos os LEDs da matriz na cor BRANCA com 20% de intensidade
+    
 }
 void all_leds_off() {
     // desligar todos os LEDs da matriz
