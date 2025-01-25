@@ -33,7 +33,7 @@ void key6_animation();
 void all_leds_blue();
 void all_leds_red();
 void all_leds_green();
-void all_leds_white();
+void all_leds_white(PIO Pio, uint sm);
 void all_leds_off();
 
 void buzzer_init();
@@ -177,7 +177,6 @@ void all_leds_white(PIO pio, uint sm) {
     for (int i = 0; i < NUM_PIXELS; i++) {
         pio_sm_put_blocking(pio, sm, matrix_rgb(0.2, 0.2, 0.2));
     }
-    
 }
 void all_leds_off() {
     // desligar todos os LEDs da matriz
