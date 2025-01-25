@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
+#include "hardware/clocks.h"
 #include "pico/bootrom.h"
 
-// #include "blink.pio.h"
+#include "blink.pio.h"
 
 #define BUZZER_PIN 21
 
 #define OUT_PIN 10
 
-const uint PIN_COLUMNS[] = {5, 4, 3, 2};
-const uint PINS_ROWS[] = {9, 8, 7, 6};
+#define NUM_PIXELS 25
+
+const uint8_t PIN_COLUMNS[] = {5, 4, 3, 2};
+const uint8_t PINS_ROWS[] = {9, 8, 7, 6};
 
 const char CONJUNTO_DE_CARACTERES[4][4] = {
     {'1', '2', '3', 'A'},
@@ -34,43 +37,30 @@ void all_leds_white();
 void all_leds_off();
 
 void buzzer_init();
-void buzzer_on();
-void buzzer_off();
+void play_buzzer(uint32_t frequency, uint32_t duration_ms);
 void bootsel_mode();
 
 void inicializarTeclado();
 char verificarPinosAtivos();
 void mapearTeclado(char *caractere);
 
-// void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
-//     blink_program_init(pio, sm, offset, pin);
-//     pio_sm_set_enabled(pio, sm, true);
-
-//     printf("Blinking pin %d at %d Hz\n", pin, freq);
-
-//     // PIO counter program takes 3 more cycles in total than we pass as
-//     // input (wait for n + 1; mov; jmp)
-//     pio->txf[sm] = (125000000 / (2 * freq)) - 3;
-// }
+uint32_t matrix_rgb(double r, double g, double b);
 
 int main()
 {
+    PIO pio = pio0;
+
+    set_sys_clock_khz(128000, false);
+
     stdio_init_all();
 
     inicializarTeclado();
     buzzer_init();
 
-    // // PIO Blinking example
-    // PIO pio = pio0;
-    // uint offset = pio_add_program(pio, &blink_program);
-    // printf("Loaded program at %d\n", offset);
-    
-    // #ifdef PICO_DEFAULT_LED_PIN
-    // blink_pin_forever(pio, 0, offset, PICO_DEFAULT_LED_PIN, 3);
-    // #else
-    // blink_pin_forever(pio, 0, offset, 11, 3);
-    // #endif
-    // // For more pio examples see https://github.com/raspberrypi/pico-examples/tree/master/pio
+    // Configurações da PIO
+    uint offset = pio_add_program(pio, &blink_program);
+    uint sm = pio_claim_unused_sm(pio, true);
+    blink_program_init(pio, sm, offset, OUT_PIN);
 
     while (true) {
         char c = '\0';
@@ -99,7 +89,7 @@ void inicializarTeclado() {
 char verificarPinosAtivos() {
     for (int i = 0; i < 4; i++) {
         gpio_put(PINS_ROWS[i], 1);
-      
+
         for (int j = 0; j < 4; j++) {
             if (gpio_get(PIN_COLUMNS[j])) {
                 gpio_put(PINS_ROWS[i], 0);
@@ -133,7 +123,6 @@ void mapearTeclado(char *caractere) {
             break;
         case 'A':
             all_leds_off();
-            buzzer_off();
             break;
         case 'B':
             all_leds_blue();
@@ -185,6 +174,7 @@ void all_leds_green() {
 }
 void all_leds_white() {
     // ligar todos os LEDs da matriz na cor BRANCA com 20% de intensidade
+    
 }
 void all_leds_off() {
     // desligar todos os LEDs da matriz
@@ -195,11 +185,17 @@ void buzzer_init() {
     gpio_set_dir(BUZZER_PIN, GPIO_OUT);
     gpio_put(BUZZER_PIN, 0);
 }
-void buzzer_on() {
-    // implementar som do buzzer
+
+void play_buzzer(uint32_t frequency, uint32_t duration_ms) {
+    // implementar som do buzzer na frequência frequency e durante duration_ms milissegundos
 }
-void buzzer_off() {
-    // desligar buzzer
+
+uint32_t matrix_rgb(double r, double g, double b){
+    unsigned char R, G, B;
+    R = r * 255;
+    G = g * 255;
+    B = b * 255;
+    return (G << 24) | (R << 16) | (B << 8);
 }
 
 void bootsel_mode() {

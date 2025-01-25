@@ -10,25 +10,52 @@
     pull block
     out y, 32
 .wrap_target
-    mov x, y
-    set pins, 1   ; Turn LED on
-lp1:
-    jmp x-- lp1   ; Delay for (x + 1) cycles, x is a 32 bit number
-    mov x, y
-    set pins, 0   ; Turn LED off
-lp2:
-    jmp x-- lp2   ; Delay for the same number of cycles again
-.wrap             ; Blink forever!
-
+    out x, 1
+    jmp !x do_zero
+do_one:
+    set pins, 1 [4]
+    jmp cont
+do_zero:
+    set pins, 1 [2]
+    set pins, 0 [2]
+cont:
+    set pins, 0 [1]
+.wrap
 
 % c-sdk {
 // this is a raw helper function for use by the user which sets up the GPIO output, and configures the SM to output on a particular pin
 
 void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
-   pio_gpio_init(pio, pin);
-   pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
-   pio_sm_config c = blink_program_get_default_config(offset);
-   sm_config_set_set_pins(&c, pin, 1);
-   pio_sm_init(pio, sm, offset, &c);
+
+    pio_sm_config c = blink_program_get_default_config(offset);
+   
+    // Attach pio to the GPIO
+    pio_gpio_init(pio, pin);
+    
+    // Set pin direction to output at the PIO
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+
+
+    // Set pin to be part of set output group
+    sm_config_set_set_pins(&c, pin, 1);
+    
+    // Set pio clock to 8MHz, giving 10 cycles per LED binary digit
+    float div = clock_get_hz(clk_sys) / 8000000.0;
+    sm_config_set_clkdiv(&c, div);
+
+    // Give all the FIFO space to TX (not using RX)
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+
+    // Shift to the left, use autopull, next pull threshold 24 bits
+    sm_config_set_out_shift(&c, false, true, 24);
+
+    // Set sticky-- continue to drive value from last set/out.  Other stuff off.
+    sm_config_set_out_special(&c, true, false, false);
+
+    // Load configuration, and jump to the start of the program
+    pio_sm_init(pio, sm, offset, &c);
+
+    // enable this pio state machine
+    pio_sm_set_enabled(pio, sm, true);
 }
 %}
