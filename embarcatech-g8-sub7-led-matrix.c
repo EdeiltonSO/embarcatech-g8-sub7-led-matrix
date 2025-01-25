@@ -172,7 +172,7 @@ void key2_animation( PIO *pio, uint *sm) {
          {0.0, 0.0, 0.0, 0.0, 0.0}},
 ///////////////////////////////////////////////////////////////////
 
-// Desenhos que serão usados nos padões de leds
+// Desenhos que serão usados nos padrões de leds
         {{0.0, 0.0, 1.0, 0.0, 0.0},
          {0.0, 1.0, 1.0, 0.0, 0.0},
          {1.0, 0.0, 1.0, 0.0, 0.0},
@@ -229,13 +229,13 @@ void key2_animation( PIO *pio, uint *sm) {
 ///////////////////////////////////////////////////////////////////
     };
 
-    // Laço resposável por percorrer todos os desenhos
+    // Laço responsável por percorrer todos os desenhos
     for (int i = 0; i < DRAWS; i++)
     {
         // Função usada para resetar a matriz de trasição entre desenhos
         resetTransitionFrame(animate[0], &FRAME_DIMENSION);
 
-        // Liga os Leds no padrão do do desenho representado na matriz
+        // Liga os Leds no padrão do desenho representado na matriz
         for (int j = 0; j < FRAME_DIMENSION; j++)
         {
             for (int k = 0; k < FRAME_DIMENSION; k++)
