@@ -42,7 +42,7 @@ void bootsel_mode();
 
 void inicializarTeclado();
 char verificarPinosAtivos();
-void mapearTeclado(char *caractere);
+void mapearTeclado(char *caractere, PIO pio, uint sm);
 
 uint32_t matrix_rgb(double r, double g, double b);
 
@@ -65,7 +65,7 @@ int main()
     while (true) {
         char c = '\0';
         c = verificarPinosAtivos();
-        mapearTeclado(&c);
+        mapearTeclado(&c, pio, sm);
         sleep_ms(150);
     }
 }
@@ -101,7 +101,7 @@ char verificarPinosAtivos() {
     return '\0';
 }
 
-void mapearTeclado(char *caractere) { 
+void mapearTeclado(char *caractere, PIO pio, uint sm) { 
     switch (*caractere) {
         case '1':
             key1_animation();
@@ -134,7 +134,7 @@ void mapearTeclado(char *caractere) {
             all_leds_green();
             break;
         case '#':
-            all_leds_white();
+            all_leds_white(pio, sm);
             break;
         case '*':
             bootsel_mode();
@@ -172,8 +172,11 @@ void all_leds_red() {
 void all_leds_green() {
     // ligar todos os LEDs da matriz na cor VERDE com 50% de intensidade
 }
-void all_leds_white() {
+void all_leds_white(PIO pio, uint sm) {
     // ligar todos os LEDs da matriz na cor BRANCA com 20% de intensidade
+    for (int i = 0; i < NUM_PIXELS; i++) {
+        pio_sm_put_blocking(pio, sm, matrix_rgb(0.2, 0.2, 0.2));
+    }
     
 }
 void all_leds_off() {
