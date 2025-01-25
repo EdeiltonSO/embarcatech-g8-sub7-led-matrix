@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/embarcatech-g8-sub7-led-matrix.uf2'
+elf = 'build/embarcatech-g8-sub7-led-matrix.elf'
