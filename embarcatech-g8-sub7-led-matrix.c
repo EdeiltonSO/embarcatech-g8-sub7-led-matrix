@@ -580,6 +580,7 @@ void key4_animation(PIO *pio,uint *sm ) { // Animação de uma bomba
                 }
 
             }
+            sleep_ms(230);// tempo de cada frame
         }
 }
 
