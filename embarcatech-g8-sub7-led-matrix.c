@@ -131,7 +131,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_red();
             break;
         case 'D':
-            all_leds_green();
+            all_leds_green(&pio, &sm);
             break;
         case '#':
             all_leds_white(&pio, &sm);
@@ -601,8 +601,12 @@ void all_leds_red() {
     // ligar todos os LEDs da matriz na cor VERMELHA com 80% de intensidade
 }
 
-void all_leds_green() {
+void all_leds_green(PIO *pio, uint *sm) {
     // ligar todos os LEDs da matriz na cor VERDE com 50% de intensidade
+    for (int i=0; i<NUM_PIXELS; i++){
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.5, 0.0));
+     }
+
 }
 
 void all_leds_white(PIO *pio, uint *sm) {
