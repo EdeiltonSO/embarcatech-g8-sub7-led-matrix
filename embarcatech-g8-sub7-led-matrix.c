@@ -30,11 +30,11 @@ void key4_animation();
 void key5_animation();
 void key6_animation();
 
-void all_leds_blue(PIO *pio,uint *sm);
+void all_leds_blue(PIO *pio, uint *sm);
 void all_leds_red();
 void all_leds_green();
-void all_leds_white(PIO pio, uint sm);
-void all_leds_off();
+void all_leds_white(PIO *pio, uint *sm);
+void all_leds_off(PIO *pio, uint *sm);
 
 void buzzer_init();
 void play_buzzer(uint32_t frequency, uint32_t duration_ms);
@@ -122,10 +122,10 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             key6_animation();
             break;
         case 'A':
-            all_leds_off();
+            all_leds_off(&pio, &sm);
             break;
         case 'B':
-            all_leds_blue(&pio,&sm);
+            all_leds_blue(&pio, &sm);
             break;
         case 'C':
             all_leds_red();
@@ -134,7 +134,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_green();
             break;
         case '#':
-            all_leds_white(pio, sm);
+            all_leds_white(&pio, &sm);
             break;
         case '*':
             bootsel_mode();
@@ -147,6 +147,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
 void key1_animation() {
     // implementar animação da tecla 1
 }
+
 //Função específica da 2° animação
 void resetTransitionFrame(double matrix[5][5], const uint *FRAME_DIMENSION)
 {
@@ -158,6 +159,7 @@ void resetTransitionFrame(double matrix[5][5], const uint *FRAME_DIMENSION)
         }
     }
 }
+
 //Animação de uma contagem de 1 a 9
 void key2_animation( PIO *pio, uint *sm) {
     const uint DRAWS = 10, FRAME_DIMENSION = 5;
@@ -267,15 +269,19 @@ void key2_animation( PIO *pio, uint *sm) {
         }
     }
 }
+
 void key3_animation() {
     // implementar animação da tecla 3
 }
+
 void key4_animation() {
     // implementar animação da tecla 4
 }
+
 void key5_animation() {
     // implementar animação da tecla 5
 }
+
 void key6_animation() {
     // implementar animação da tecla 6
 }
@@ -286,18 +292,22 @@ void all_leds_blue(PIO *pio,uint *sm) {
         pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 1.0));
     }
 }
+
 void all_leds_red() {
     // ligar todos os LEDs da matriz na cor VERMELHA com 80% de intensidade
 }
+
 void all_leds_green() {
     // ligar todos os LEDs da matriz na cor VERDE com 50% de intensidade
 }
-void all_leds_white(PIO pio, uint sm) {
+
+void all_leds_white(PIO *pio, uint *sm) {
     // ligar todos os LEDs da matriz na cor BRANCA com 20% de intensidade
     for (int i = 0; i < NUM_PIXELS; i++) {
-        pio_sm_put_blocking(pio, sm, matrix_rgb(0.2, 0.2, 0.2));
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.2, 0.2, 0.2));
     }
 }
+
 void all_leds_off(PIO *pio, uint *sm) {
     // desligar todos os LEDs da matriz
     for(int i=0; i<NUM_PIXELS;i++){
