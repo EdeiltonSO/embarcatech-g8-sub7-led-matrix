@@ -298,8 +298,11 @@ void all_leds_white(PIO pio, uint sm) {
         pio_sm_put_blocking(pio, sm, matrix_rgb(0.2, 0.2, 0.2));
     }
 }
-void all_leds_off() {
+void all_leds_off(PIO *pio, uint *sm) {
     // desligar todos os LEDs da matriz
+    for(int i=0; i<NUM_PIXELS;i++){
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 0.0));
+    }
 }
 
 void buzzer_init() {
