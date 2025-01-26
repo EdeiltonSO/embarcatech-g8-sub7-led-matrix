@@ -23,18 +23,18 @@ const char CONJUNTO_DE_CARACTERES[4][4] = {
 };
 
 // Protótipos das funções
-void key1_animation();
-void key2_animation();
+void key1_animation(PIO *pio, uint *sm);
+void key2_animation(PIO *pio, uint *sm);
 void key3_animation();
 void key4_animation();
 void key5_animation();
 void key6_animation();
 
-void all_leds_blue(PIO *pio,uint *sm);
+void all_leds_blue(PIO *pio, uint *sm);
 void all_leds_red();
 void all_leds_green();
-void all_leds_white(PIO pio, uint sm);
-void all_leds_off();
+void all_leds_white(PIO *pio, uint *sm);
+void all_leds_off(PIO *pio, uint *sm);
 
 void buzzer_init();
 void play_buzzer(uint32_t frequency, uint32_t duration_ms);
@@ -104,10 +104,10 @@ char verificarPinosAtivos() {
 void mapearTeclado(char *caractere, PIO pio, uint sm) { 
     switch (*caractere) {
         case '1':
-            key1_animation();
+            key1_animation(&pio, &sm);
             break;
         case '2':
-            key2_animation(&pio,&sm);
+            key2_animation(&pio, &sm);
             break;
         case '3':
             key3_animation();
@@ -122,10 +122,10 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             key6_animation();
             break;
         case 'A':
-            all_leds_off(&pio,&sm);
+            all_leds_off(&pio, &sm);
             break;
         case 'B':
-            all_leds_blue(&pio,&sm);
+            all_leds_blue(&pio, &sm);
             break;
         case 'C':
             all_leds_red();
@@ -134,7 +134,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_green();
             break;
         case '#':
-            all_leds_white(pio, sm);
+            all_leds_white(&pio, &sm);
             break;
         case '*':
             bootsel_mode();
@@ -144,9 +144,314 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
     }
 }
 
-void key1_animation() {
-    // implementar animação da tecla 1
+void key1_animation(PIO *pio, uint *sm) {
+    const uint FRAMES = 40, FRAME_DIMENSION = 5;
+
+    double animate[40][5][5] = {
+        {
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {1.0, 1.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {1.0, 1.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {1.0, 1.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {1.0, 1.0, 0.0, 0.0, 1.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 1.0, 0.0, 0.0, 1.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 1.0, 1.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 1.0, 0.0, 1.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 1.0, 1.0, 1.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 1.0, 1.0, 1.0},
+            {0.0, 0.0, 1.0, 1.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 1.0, 1.0, 1.0},
+            {0.0, 0.0, 1.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 1.0, 1.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 1.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0}
+        },
+        // 27 frames até aqui
+        // frames após alcançar a comida
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {0.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 1.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 1.0, 1.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 0.0, 0.0, 0.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 0.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+        {
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0},
+            {1.0, 1.0, 1.0, 1.0, 1.0}
+        },
+    };
+
+    // percorre o objeto animation até passar por todos os frames
+    for (int i = 0; i < FRAMES; i++)
+    {
+        // liga os LEDs conforme cada frame
+        for (int j = 0; j < FRAME_DIMENSION; j++)
+        {
+            for (int k = 0; k < FRAME_DIMENSION; k++)
+            {
+                if (j == 4 && k == 0 && i < 26) {
+                    // se for o led da comida da cobrinha, acender vermelho
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(animate[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
+                }
+                else if ((j != 4 || k != 0) && i < 26) {
+                    // se for parte do corpo da cobrinha, acender verde
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, animate[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0));
+                }
+                else if (i >= 26) {
+                    // se a cobrinha alcançar a comida, acender azul
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, animate[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1]));
+                }
+            }
+        }
+        // tempo de duração de cada frame
+        sleep_ms(150);
+    }
 }
+
 //Função específica da 2° animação
 void resetTransitionFrame(double matrix[5][5], const uint *FRAME_DIMENSION)
 {
@@ -158,8 +463,9 @@ void resetTransitionFrame(double matrix[5][5], const uint *FRAME_DIMENSION)
         }
     }
 }
+
 //Animação de uma contagem de 1 a 9
-void key2_animation( PIO *pio, uint *sm) {
+void key2_animation(PIO *pio, uint *sm) {
     const uint DRAWS = 10, FRAME_DIMENSION = 5;
 
     double animate[10][5][5] = {
@@ -232,7 +538,7 @@ void key2_animation( PIO *pio, uint *sm) {
     // Laço responsável por percorrer todos os desenhos
     for (int i = 0; i < DRAWS; i++)
     {
-        // Função usada para resetar a matriz de trasição entre desenhos
+        // Função usada para resetar a matriz de transição entre desenhos
         resetTransitionFrame(animate[0], &FRAME_DIMENSION);
 
         // Liga os Leds no padrão do desenho representado na matriz
@@ -267,10 +573,12 @@ void key2_animation( PIO *pio, uint *sm) {
         }
     }
 }
+
 void key3_animation() {
     // implementar animação da tecla 3
 }
-void key4_animation(PIO *pio,uint *sm ) { // Animação de uma bomba
+
+void key4_animation(PIO *pio, uint *sm ) { // Animação de uma bomba
     const uint FRAMES=35, FRAME_DIMENSION=5;
     
     double animacao[35][5][5]={
@@ -556,37 +864,38 @@ void key4_animation(PIO *pio,uint *sm ) { // Animação de uma bomba
         }// frame 35, O
     };
     // Laço da animação
-        for(uint i=0;i<FRAMES;i++){
+    for(uint i=0;i<FRAMES;i++){
 
-            if(i%2==0 && i<28){
-                for(uint j=0;j<FRAME_DIMENSION;j++){
-                    for(uint k=0;k<FRAME_DIMENSION;k++){
-                        pio_sm_put_blocking(*pio, *sm, matrix_rgb(animacao[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
-
-                    }
+        if(i%2==0 && i<28){
+            for(uint j=0;j<FRAME_DIMENSION;j++){
+                for(uint k=0;k<FRAME_DIMENSION;k++){
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(animacao[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
 
                 }
 
             }
 
-            else{
-
-                for(uint j=0;j<FRAME_DIMENSION;j++){
-                    for(uint k=0;k<FRAME_DIMENSION;k++){
-                        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, animacao[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0));
-
-                    }
-
-                }
-
-            }
-            sleep_ms(230);// tempo de cada frame
         }
+
+        else{
+
+            for(uint j=0;j<FRAME_DIMENSION;j++){
+                for(uint k=0;k<FRAME_DIMENSION;k++){
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, animacao[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0));
+
+                }
+
+            }
+
+        }
+        sleep_ms(230);// tempo de cada frame
+    }
 }
 
 void key5_animation() {
     // implementar animação da tecla 5
 }
+
 void key6_animation() {
     // implementar animação da tecla 6
 }
@@ -597,18 +906,22 @@ void all_leds_blue(PIO *pio,uint *sm) {
         pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 1.0));
     }
 }
+
 void all_leds_red() {
     // ligar todos os LEDs da matriz na cor VERMELHA com 80% de intensidade
 }
+
 void all_leds_green() {
     // ligar todos os LEDs da matriz na cor VERDE com 50% de intensidade
 }
-void all_leds_white(PIO pio, uint sm) {
+
+void all_leds_white(PIO *pio, uint *sm) {
     // ligar todos os LEDs da matriz na cor BRANCA com 20% de intensidade
     for (int i = 0; i < NUM_PIXELS; i++) {
-        pio_sm_put_blocking(pio, sm, matrix_rgb(0.2, 0.2, 0.2));
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.2, 0.2, 0.2));
     }
 }
+
 void all_leds_off(PIO *pio, uint *sm) {
     // desligar todos os LEDs da matriz
     for(int i=0; i<NUM_PIXELS;i++){
