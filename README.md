@@ -4,7 +4,7 @@
 
 1. [💡 O que é este projeto](#1--o-que-é-este-projeto)
 2. [⚡ Diagrama do hardware](#2--diagrama-do-hardware)
-3. [🎞️ Vídeo de demonstração](#3--vídeo-de-demonstração)
+3. [🎞️ Vídeo demonstrativo](#3--vídeo-demonstrativo)
 4. [🔎 Funcionalidades disponíveis](#4--funcionalidades-disponíveis)
 5. [🧰 Pré-requisitos para executar](#5--pré-requisitos-para-executar)
 6. [💻 Como executar a simulação](#6--como-executar-a-simulação)
@@ -21,7 +21,7 @@ Os componentes são conectados de acordo com o esquema abaixo:
 
 ![Diagrama do hardware](assets/diagram.PNG)
 
-## 3. 🎞️ Vídeo de demonstração
+## 3. 🎞️ Vídeo demonstrativo
 
 Uma demonstração do projeto em funcionamento pode ser assistida no link abaixo:
 
