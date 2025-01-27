@@ -32,7 +32,7 @@ void key6_animation();
 
 void all_leds_blue(PIO *pio, uint *sm);
 void all_leds_red();
-void all_leds_green();
+void all_leds_green(PIO *pio, uint *sm);
 void all_leds_white(PIO *pio, uint *sm);
 void all_leds_off(PIO *pio, uint *sm);
 
