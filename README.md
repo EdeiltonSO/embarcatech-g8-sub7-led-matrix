@@ -2,32 +2,32 @@
 
 ## Sumário
 
-1. [💡 O que é este projeto](#1-💡-o-que-é-este-projeto)
-2. [⚡ Diagrama do hardware](#2-⚡-diagrama-do-hardware)
-3. [🎞️ Vídeo de demonstração](#3-🎞️-vídeo-de-demonstração)
-4. [🔎 Funcionalidades disponíveis](#4-🔎-funcionalidades-disponíveis)
-5. [🧰 Pré-requisitos para executar](#5-🧰-pré-requisitos-para-executar)
-6. [💻 Como executar a simulação](#6-💻-como-executar-a-simulação)
-7. [👥 Colaboradores do projeto](#7-👥-colaboradores-do-projeto)
-8. [✨ Recursos para versionamento](#8-✨-recursos-para-versionamento)
+1. [💡 O que é este projeto](#1-o-que-e-este-projeto)
+2. [⚡ Diagrama do hardware](#2-diagrama-do-hardware)
+3. [🎞️ Vídeo de demonstração](#3-vídeo-de-demonstração)
+4. [🔎 Funcionalidades disponíveis](#4-funcionalidades-disponíveis)
+5. [🧰 Pré-requisitos para executar](#5-pré-requisitos-para-executar)
+6. [💻 Como executar a simulação](#6-como-executar-a-simulação)
+7. [👥 Colaboradores do projeto](#7-colaboradores-do-projeto)
+8. [✨ Recursos para versionamento](#8-recursos-para-versionamento)
 
-## 1. 💡 O que é este projeto
+## 1. 💡 O que é este projeto  {#1-o-que-e-este-projeto}
 
 Este é um firmware escrito em C para controlar — por meio de um teclado matricial 4x4 — uma matriz de LEDs RGB endereçáveis conectada a um dos pinos GPIO de um Raspberry Pi Pico W. É possível controlar os LEDs individualmente para gerar animações com variação nas cores e na intensidade de cada um deles. O projeto também implementa a ativação de um buzzer e do modo BOOTSEL do microcontrolador.
 
-## 2. ⚡ Diagrama do hardware
+## 2. ⚡ Diagrama do hardware {#2-diagrama-do-hardware}
 
 Os componentes são conectados de acordo com o esquema abaixo:
 
 ![Diagrama do hardware](assets/diagram.PNG)
 
-## 3. 🎞️ Vídeo de demonstração
+## 3. 🎞️ Vídeo de demonstração {#3-vídeo-de-demonstração}
 
 Uma demonstração do projeto em funcionamento pode ser assistida no link abaixo:
 
 ...
 
-## 4. 🔎 Funcionalidades disponíveis
+## 4. 🔎 Funcionalidades disponíveis {#4-funcionalidades-disponíveis}
 
 Por meio do teclado, o usuário pode realizar as seguintes ações:
 
@@ -50,7 +50,7 @@ Observações:
 
 - Pressionar outras teclas não tem efeito no circuito ou no firmware.
 
-## 5. 🧰 Pré-requisitos para executar
+## 5. 🧰 Pré-requisitos para executar {#5-pré-requisitos-para-executar}
 
 A configuração sugerida para executar o projeto é:
 
@@ -65,7 +65,7 @@ A configuração sugerida para executar o projeto é:
 - [Raspberry Pi Pico](https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico);
 - [Wokwi Simulator](https://marketplace.visualstudio.com/items?itemName=Wokwi.wokwi-vscode).
 
-## 6. 💻 Como executar a simulação
+## 6. 💻 Como executar a simulação {#6-como-executar-a-simulação}
 
 Com os pré-requisitos atendidos, siga os passos a seguir:
 
@@ -83,7 +83,7 @@ Com os pré-requisitos atendidos, siga os passos a seguir:
 
 4. Quando a simulação iniciar, pressione os botões do teclado matricial para testar o firmware.
 
-## 7. 👥 Colaboradores do projeto
+## 7. 👥 Colaboradores do projeto {#7-colaboradores-do-projeto}
 
 Participantes do projeto por ordem alfabética e atividades desenvolvidas:
 
@@ -109,7 +109,7 @@ Participantes do projeto por ordem alfabética e atividades desenvolvidas:
 #### Rogério Silva Palafoz Júnior
 - Responsável por...
 
-## 8. ✨ Recursos para versionamento
+## 8. ✨ Recursos para versionamento {#8-recursos-para-versionamento}
 
 ### Conventional Commits
 
