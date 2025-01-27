@@ -578,7 +578,7 @@ void key3_animation() {
     // implementar animação da tecla 3
 }
 
-void key4_animation(PIO *pio, uint *sm ) { // Animação de uma bomba
+void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
     const uint FRAMES=35, FRAME_DIMENSION=5;
     
     double animacao[35][5][5]={
