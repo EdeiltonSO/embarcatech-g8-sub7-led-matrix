@@ -2,7 +2,7 @@
 
 ## Sumário
 
-1. [💡 O que é este projeto](#1--o-que-e-este-projeto)
+1. [💡 O que é este projeto](#1--o-que-é-este-projeto)
 2. [⚡ Diagrama do hardware](#2--diagrama-do-hardware)
 3. [🎞️ Vídeo de demonstração](#3--vídeo-de-demonstração)
 4. [🔎 Funcionalidades disponíveis](#4--funcionalidades-disponíveis)
