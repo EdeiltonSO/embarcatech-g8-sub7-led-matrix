@@ -2,14 +2,14 @@
 
 ## Sumário
 
-1. [💡 O que é este projeto](#1-o-que-e-este-projeto)
-2. [⚡ Diagrama do hardware](#2-diagrama-do-hardware)
-3. [🎞️ Vídeo de demonstração](#3-vídeo-de-demonstração)
-4. [🔎 Funcionalidades disponíveis](#4-funcionalidades-disponíveis)
-5. [🧰 Pré-requisitos para executar](#5-pré-requisitos-para-executar)
-6. [💻 Como executar a simulação](#6-como-executar-a-simulação)
-7. [👥 Colaboradores do projeto](#7-colaboradores-do-projeto)
-8. [✨ Recursos para versionamento](#8-recursos-para-versionamento)
+1. [💡 O que é este projeto](#1--o-que-e-este-projeto)
+2. [⚡ Diagrama do hardware](#2--diagrama-do-hardware)
+3. [🎞️ Vídeo de demonstração](#3--vídeo-de-demonstração)
+4. [🔎 Funcionalidades disponíveis](#4--funcionalidades-disponíveis)
+5. [🧰 Pré-requisitos para executar](#5--pré-requisitos-para-executar)
+6. [💻 Como executar a simulação](#6--como-executar-a-simulação)
+7. [👥 Colaboradores do projeto](#7--colaboradores-do-projeto)
+8. [✨ Recursos para versionamento](#8--recursos-para-versionamento)
 
 ## 1. 💡 O que é este projeto
 
