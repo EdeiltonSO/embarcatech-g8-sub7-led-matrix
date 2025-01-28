@@ -33,13 +33,13 @@ Por meio do teclado, o usuário pode realizar as seguintes ações:
 
 - Pressionar `1` inicia a animação 1 (jogo da cobrinha);
 - Pressionar `2` inicia a animação 2 (contagem de 1 a 9);
-- ~~Pressionar `3` inicia a animação 3;~~ `(pendente ⚠)`
+- Pressionar `3` inicia a animação 3 (ping-pong);
 - Pressionar `4` inicia a animação 4 (letras do nome "GUSTAVO");
-- ~~Pressionar `5` inicia a animação 5;~~ `(pendente ⚠)`
-- ~~Pressionar `6` inicia a animação 6 e liga o buzzer;~~ `(pendente ⚠)`
+- Pressionar `5` inicia a animação 5 (abreviação "Jr" seguida de um sorriso);
+- Pressionar `6` inicia a animação 6 (cobrinha amarela + som de jogo com buzzer);
 - Pressionar `A` desliga todos os LEDs da matriz;
 - Pressionar `B` liga todos os LEDs na cor azul, com 100% de intensidade;
-- ~~Pressionar `C` liga todos os LEDs na cor vermelha, com 80% de intensidade;~~ `(pendente ⚠)`
+- Pressionar `C` liga todos os LEDs na cor vermelha, com 80% de intensidade;
 - Pressionar `D` liga todos os LEDs na cor verde, com 50% de intensidade;
 - Pressionar `#` liga todos os LEDs na cor branca, com 20% de intensidade;
 - Pressionar `*` habilita o modo de gravação da placa;
@@ -88,24 +88,47 @@ Participantes do projeto por ordem alfabética e atividades desenvolvidas:
 ### Líder
 
 #### Edeilton da Silva de Oliveira
-- Responsável por...
+
+Responsável por:
+- Implementar animação 1
+- Configurar a leitura do teclado
+- Implementar o modo BOOTSEL
+- Escrever a documentação
+- Revisar Pull Requests
 
 ### Desenvolvedores
 
 #### Cibelle Sousa Rodrigues
-- Responsável por...
+
+Responsável por:
+- Implementar a animação 6
+- Implementar o som do buzzer
+- Desenhar o diagrama do circuito
+- Ligar a matriz de LEDs em branco 20%
 
 #### Edemir de Carvalho Rodrigues
-- Responsável por...
+
+Responsável por:
+- Implementar a animação 3
+- Ligar a matriz de LEDs em vermelho 80%
 
 #### Gustavo Oliveira Alves
-- Responsável por...
+
+Responsável por implementar:
+- Implementar a animação 4
+- Desligar a matriz de LEDs
 
 #### Joabis Oliveira dos Santos Júnior
-- Responsável por...
+
+Responsável por implementar:
+- Implementar a animação 5
+- Ligar a matriz de LEDs em verde 50%
 
 #### Rogério Silva Palafoz Júnior
-- Responsável por...
+
+Responsável por implementar:
+- Implementar a animação 2
+- Ligar a matriz de LEDs em azul 100%
 
 ## 8. ✨ Recursos para versionamento
 
