@@ -36,7 +36,7 @@ Por meio do teclado, o usuário pode realizar as seguintes ações:
 - Pressionar `3` inicia a animação 3 (ping-pong);
 - Pressionar `4` inicia a animação 4 (letras do nome "GUSTAVO");
 - ~~Pressionar `5` inicia a animação 5;~~ `(pendente ⚠)`
-- ~~Pressionar `6` inicia a animação 6 e liga o buzzer;~~ `(pendente ⚠)`
+- Pressionar `6` inicia a animação 6 e toca uma música com o buzzer;
 - Pressionar `A` desliga todos os LEDs da matriz;
 - Pressionar `B` liga todos os LEDs na cor azul, com 100% de intensidade;
 - Pressionar `C` liga todos os LEDs na cor vermelha, com 80% de intensidade;
