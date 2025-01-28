@@ -988,7 +988,6 @@ void key4_animation(PIO *pio, uint *sm) { // Animação do nome Gustavo
 }
 
 void key5_animation(PIO *pio, uint *sm) {
-    // implementar animação da tecla 5
     const uint FRAMES =35, FRAME_DIMENSION = 5;
 
     double animate [35][5][5]={
