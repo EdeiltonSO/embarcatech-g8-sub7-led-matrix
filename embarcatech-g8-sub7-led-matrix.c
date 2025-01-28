@@ -28,7 +28,7 @@ const char CONJUNTO_DE_CARACTERES[4][4] = {
 void key1_animation(PIO *pio, uint *sm);
 void key2_animation(PIO *pio, uint *sm);
 void key3_animation(PIO *pio, uint *sm);
-void key4_animation();
+void key4_animation(PIO *pio, uint *sm);
 void key5_animation();
 void key6_animation();
 
@@ -115,7 +115,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             key3_animation(&pio, &sm);
             break;
         case '4': // Mostra o nome GUSTAVO
-            key4_animation(&pio,&sm);
+            key4_animation(&pio, &sm);
             break;
         case '5':
             key5_animation();
@@ -658,7 +658,7 @@ void key3_animation(PIO *pio, uint *sm) {
 }
 
 
-void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
+void key4_animation(PIO *pio, uint *sm) { // Animação do nome Gustavo
     const uint FRAMES=37, FRAME_DIMENSION=5;
     
     double animacao[37][5][5]={
