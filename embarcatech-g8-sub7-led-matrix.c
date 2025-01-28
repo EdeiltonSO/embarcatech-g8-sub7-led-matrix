@@ -657,7 +657,6 @@ void key3_animation(PIO *pio, uint *sm) {
     }
 }
 
-
 void key4_animation(PIO *pio, uint *sm) { // Animação do nome Gustavo
     const uint FRAMES=37, FRAME_DIMENSION=5;
     
