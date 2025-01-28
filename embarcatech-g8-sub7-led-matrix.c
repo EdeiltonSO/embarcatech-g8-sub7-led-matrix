@@ -130,7 +130,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_blue(&pio, &sm);
             break;
         case 'C':
-            all_leds_red(&pio,&sm);
+            all_leds_red(&pio, &sm);
             break;
         case 'D':
             all_leds_green(&pio, &sm);
