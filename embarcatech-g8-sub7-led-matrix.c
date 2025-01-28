@@ -3,6 +3,8 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "pico/bootrom.h"
+#include <stdlib.h> // Para rand() e srand()
+#include <time.h>   // Para inicializar o gerador de números aleatórios
 
 #include "blink.pio.h"
 
@@ -25,13 +27,13 @@ const char CONJUNTO_DE_CARACTERES[4][4] = {
 // Protótipos das funções
 void key1_animation(PIO *pio, uint *sm);
 void key2_animation(PIO *pio, uint *sm);
-void key3_animation();
+void key3_animation(PIO *pio, uint *sm);
 void key4_animation();
 void key5_animation();
 void key6_animation();
 
 void all_leds_blue(PIO *pio, uint *sm);
-void all_leds_red();
+void all_leds_red(PIO *pio, uint *sm);
 void all_leds_green(PIO *pio, uint *sm);
 void all_leds_white(PIO *pio, uint *sm);
 void all_leds_off(PIO *pio, uint *sm);
@@ -110,7 +112,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             key2_animation(&pio, &sm);
             break;
         case '3':
-            key3_animation();
+            key3_animation(&pio, &sm);
             break;
         case '4': // Mostra o nome GUSTAVO
             key4_animation(&pio,&sm);
@@ -128,7 +130,7 @@ void mapearTeclado(char *caractere, PIO pio, uint sm) {
             all_leds_blue(&pio, &sm);
             break;
         case 'C':
-            all_leds_red();
+            all_leds_red(&pio,&sm);
             break;
         case 'D':
             all_leds_green(&pio, &sm);
@@ -574,51 +576,129 @@ void key2_animation(PIO *pio, uint *sm) {
     }
 }
 
-void key3_animation() {
-    // implementar animação da tecla 3
+//Animação de jogo de ping pong
+void key3_animation(PIO *pio, uint *sm) { 
+    const uint FRAME_DIMENSION = 5; // Tamanho da matriz (5x5)
+    int game_over = 0;              // Indica se o jogo terminou
+
+    // Inicializa o gerador de números aleatórios
+    srand(time(NULL));
+
+    // Posições numeradas das "bolinhas azuis"
+    int blue_positions[] = {5, 10, 15, 9, 14, 19}; // Esquerda e direita
+    int sequence[] = {5, 19, 10, 9, 4};            // Sequência da bolinha vermelha
+    int sequence_length = sizeof(sequence) / sizeof(sequence[0]);
+    int current_target = 0; // Índice do alvo atual na sequência
+
+    // Posição inicial da bolinha vermelha
+    int ball_row = 1; // Começa na posição 5 (linha 1)
+    int ball_col = 0; // Começa na coluna 0 (lado esquerdo)
+
+    for (int frame = 0; frame < 30; frame++) { // Total de 30 frames
+        if (game_over) {
+            // Se o jogo acabou, preenche a tela toda de verde
+            for (int row = 0; row < FRAME_DIMENSION; row++) {
+                for (int col = 0; col < FRAME_DIMENSION; col++) {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 1.0, 0.0)); // Verde
+                }
+            }
+            sleep_ms(1000); // Pausa para visualizar o estado final
+
+            // Desliga todos os LEDs após exibir o verde
+            for (int row = 0; row < FRAME_DIMENSION; row++) {
+                for (int col = 0; col < FRAME_DIMENSION; col++) {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 0.0)); // Preto
+                }
+            }
+            break; // Finaliza o loop
+        }
+
+        // Atualiza a posição da bolinha vermelha em direção ao alvo
+        int target_index = sequence[current_target];
+        int target_row = target_index / FRAME_DIMENSION;
+        int target_col = target_index % FRAME_DIMENSION;
+
+        if (current_target == sequence_length - 1) {
+            // Se o alvo atual for o último (posição 4), a bolinha vai diretamente ao alvo
+            ball_row = target_row;
+            ball_col = target_col;
+            game_over = 1; // Termina o jogo ao atingir o último alvo
+        } else {
+            // Movimento normal para outros alvos
+            if (ball_row < target_row) ball_row++;
+            else if (ball_row > target_row) ball_row--;
+
+            if (ball_col < target_col) ball_col++;
+            else if (ball_col > target_col) ball_col--;
+        }
+
+        // Verifica se a bolinha atingiu o alvo
+        if (ball_row == target_row && ball_col == target_col && current_target < sequence_length - 1) {
+            current_target++; // Avança para o próximo alvo
+            sleep_ms(300);    // Pausa de 300 ms ao atingir o alvo antes de continuar
+        }
+
+        // Renderiza o frame
+        for (int row = 0; row < FRAME_DIMENSION; row++) {
+            for (int col = 0; col < FRAME_DIMENSION; col++) {
+                int position_index = row * FRAME_DIMENSION + col;
+
+                if (position_index == 5 || position_index == 10 || position_index == 15 || position_index == 9 || position_index == 14 || position_index == 19) {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 1.0)); // Azul para as bolinhas fixas
+                } else if (row == ball_row && col == ball_col) {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(1.0, 0.0, 0.0)); // Vermelho para a bolinha
+                } else {
+                    pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.0, 0.0, 0.0)); // Preto para o fundo
+                }
+            }
+        }
+
+        sleep_ms(100); // 10 FPS
+    }
 }
 
+
 void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
-    const uint FRAMES=35, FRAME_DIMENSION=5;
+    const uint FRAMES=37, FRAME_DIMENSION=5;
     
-    double animacao[35][5][5]={
+    double animacao[37][5][5]={
         {
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.5, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},//normal   ok
+            {0.0, 0.0, 0.0, 0.0, 0.0},//inverte
+            {0.0, 0.0, 0.5, 0.5, 0.5},//normal
+            {0.5, 0.0, 0.0, 0.0, 0.0},//inverte
+            {0.0, 0.0, 0.0, 0.0, 0.0},//normal
 
         },// frame 1
         {
-            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},//ok
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.5},
 
         },// frame 2
         {
-            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},//ok
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
         },// frame 3
         {
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 0.0, 0.0, 0.0, 0.0},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
         },// frame 4
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
         },// frame 5, fim da letra G
@@ -631,23 +711,23 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 6
          {
+            {0.5, 0.0, 0.0, 0.0, 0.0},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 7
         {
+            {0.5, 0.0, 0.0, 0.0, 0.0},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
         },// frame 8
         {
-            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
@@ -663,7 +743,7 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 10
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
@@ -671,26 +751,26 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 11
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 12
         {
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.0, 0.0, 0.0, 0.0, 0.5},
 
         },// frame 13
         {
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
         },// frame 14, fim da letra S
@@ -703,7 +783,7 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 15
         {
-            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},//ok
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
@@ -711,7 +791,7 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 16
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
@@ -719,154 +799,170 @@ void key4_animation(PIO *pio, uint *sm ) { // Animação do nome Gustavo
 
         },// frame 17, fim da letra T
         {
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
 
-        },// frame 18
+        },
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 19
         {
             {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.0, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 20
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},
+
+        },// frame 21
+        {
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
 
-        },// frame 21, fim da letra A
+        },// frame 22, fim da letra A
         {
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0},
-
-        },// frame 22
-        {
-            {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 23
         {
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.5},
-            {0.0, 0.5, 0.0, 0.5, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0, 0.0, 0.0},
 
         },// frame 24
         {
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.0, 0.5, 0.0, 0.5, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+
+        },// frame 25
+        {
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.0, 0.5, 0.0, 0.5, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
 
-        },// frame 25, fim da letra V
+        },// frame 26, fim da letra V
         {
-            {0.5, 0.5, 0.0, 0.0, 0.0},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0},
+
+        },//27
+        {
+            {0.5, 0.5, 0.0, 0.0, 0.0},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.0},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.0, 0.0, 0.5},
 
-        },// frame 26
+        },// frame 28
         {
-            {0.5, 0.5, 0.0, 0.5, 0.5},
+            {0.5, 0.5, 0.0, 0.5, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.0, 0.5, 0.5},
 
-        },// frame 27
+        },// frame 29
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
-        },// frame 28, fim da letra O, fim do nome.
+        },// frame 30, fim da letra O, fim do nome.
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
-        },// frame 29, G
+        },// frame 31, G
         {
-            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
-        },// frame 30, U
+        },// frame 32, U
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
-            {0.5, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
+            {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
             {0.0, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
-        },// frame 31, S
+        },// frame 33, S
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
 
-        },// frame 32, T
+        },// frame 34, T
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
 
-        },// frame 33, A
+        },// frame 35, A
         {
-            {0.5, 0.0, 0.0, 0.0, 0.5},
+            {0.5, 0.0, 0.0, 0.0, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.0, 0.5, 0.0, 0.5, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
             {0.0, 0.0, 0.5, 0.0, 0.0},
 
-        },// frame 34, V
+        },// frame 36, V
         {
-            {0.5, 0.5, 0.5, 0.5, 0.5},
+            {0.5, 0.5, 0.5, 0.5, 0.5},//ok
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.0, 0.0, 0.0, 0.5},
             {0.5, 0.5, 0.5, 0.5, 0.5},
 
-        }// frame 35, O
+        }// frame 37, O
     };
     // Laço da animação
     for(uint i=0;i<FRAMES;i++){
 
-        if(i%2==0 && i<28){
+        if(i%2==0 && i<31){
             for(uint j=0;j<FRAME_DIMENSION;j++){
                 for(uint k=0;k<FRAME_DIMENSION;k++){
                     pio_sm_put_blocking(*pio, *sm, matrix_rgb(animacao[i][FRAME_DIMENSION - 1 - j][(j + 1) % 2 == 0 ? k : FRAME_DIMENSION - k - 1], 0.0, 0.0));
@@ -907,8 +1003,11 @@ void all_leds_blue(PIO *pio,uint *sm) {
     }
 }
 
-void all_leds_red() {
+void all_leds_red(PIO *pio, uint *sm) {
     // ligar todos os LEDs da matriz na cor VERMELHA com 80% de intensidade
+     for (int i=0; i<NUM_PIXELS; i++){
+        pio_sm_put_blocking(*pio, *sm, matrix_rgb(0.8, 0.0, 0.0));
+     }
 }
 
 void all_leds_green(PIO *pio, uint *sm) {
