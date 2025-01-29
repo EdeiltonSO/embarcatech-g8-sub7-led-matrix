@@ -38,7 +38,6 @@ void all_leds_white(PIO *pio, uint *sm);
 void all_leds_off(PIO *pio, uint *sm);
 
 void buzzer_init();
-void play_buzzer(uint32_t frequency, uint32_t duration_ms);
 void bootsel_mode();
 
 void inicializarTeclado();
