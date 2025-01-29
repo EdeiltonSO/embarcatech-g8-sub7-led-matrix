@@ -35,13 +35,22 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(embarcatech-g8-sub7-led-matrix embarcatech-g8-sub7-led-matrix.c )
+add_executable(
+    embarcatech-g8-sub7-led-matrix 
+    embarcatech-g8-sub7-led-matrix.c 
+    animations/animation_1.c
+    animations/animation_2.c
+    animations/animation_3.c
+    animations/animation_4.c
+    animations/animation_5.c
+    animations/animation_6.c
+)
 
 pico_set_program_name(embarcatech-g8-sub7-led-matrix "embarcatech-g8-sub7-led-matrix")
 pico_set_program_version(embarcatech-g8-sub7-led-matrix "0.1")
 
 # Generate PIO header
-pico_generate_pio_header(embarcatech-g8-sub7-led-matrix ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
+pico_generate_pio_header(embarcatech-g8-sub7-led-matrix ${CMAKE_CURRENT_LIST_DIR}/led_matrix.pio)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(embarcatech-g8-sub7-led-matrix 0)
@@ -55,6 +64,7 @@ target_link_libraries(embarcatech-g8-sub7-led-matrix
 # Add the standard include files to the build
 target_include_directories(embarcatech-g8-sub7-led-matrix PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
+  ${CMAKE_SOURCE_DIR}/animations
 )
 
 # Add any user requested libraries

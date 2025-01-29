@@ -6,7 +6,7 @@
 
 ; SET pin 0 should be mapped to your LED GPIO
 
-.program blink
+.program led_matrix
     pull block
     out y, 32
 .wrap_target
@@ -25,9 +25,9 @@ cont:
 % c-sdk {
 // this is a raw helper function for use by the user which sets up the GPIO output, and configures the SM to output on a particular pin
 
-void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
+void led_matrix_program_init(PIO pio, uint sm, uint offset, uint pin) {
 
-    pio_sm_config c = blink_program_get_default_config(offset);
+    pio_sm_config c = led_matrix_program_get_default_config(offset);
    
     // Attach pio to the GPIO
     pio_gpio_init(pio, pin);
