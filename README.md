@@ -25,7 +25,7 @@ Os componentes são conectados de acordo com o esquema abaixo:
 
 Uma demonstração do projeto em funcionamento pode ser assistida no link abaixo:
 
-`(pendente ⚠)`
+https://drive.google.com/file/d/1-3MIG_53BO5aMw3DzRloywUoWEGcIqD4/view?usp=sharing
 
 ## 4. 🔎 Funcionalidades disponíveis
 
