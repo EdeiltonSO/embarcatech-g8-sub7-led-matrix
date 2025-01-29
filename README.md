@@ -142,6 +142,7 @@ As labels em pull requests ajudam a identificar o escopo das tarefas. Nesse proj
 
 - `bugfix`: para correção de bugs
 - `documentação`: para indicar melhorias ou inclusões na documentação
+- `refatoração`: para indicar mudanças na estrutura do código
 - `readonly`: para indicar informação ou histórico
 - `novidade`: para indicar a implementação de uma nova feature
 
