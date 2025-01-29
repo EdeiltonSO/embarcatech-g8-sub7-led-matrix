@@ -6,7 +6,7 @@
 #include <stdlib.h> // Para rand() e srand()
 #include <time.h>   // Para inicializar o gerador de números aleatórios
 
-#include "blink.pio.h"
+#include "led_matrix.pio.h"
 
 #define BUZZER_PIN 21
 
@@ -60,9 +60,9 @@ int main()
     buzzer_init();
 
     // Configurações da PIO
-    uint offset = pio_add_program(pio, &blink_program);
+    uint offset = pio_add_program(pio, &led_matrix_program);
     uint sm = pio_claim_unused_sm(pio, true);
-    blink_program_init(pio, sm, offset, OUT_PIN);
+    led_matrix_program_init(pio, sm, offset, OUT_PIN);
 
     while (true) {
         char c = '\0';

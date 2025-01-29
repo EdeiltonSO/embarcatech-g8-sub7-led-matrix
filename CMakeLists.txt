@@ -41,7 +41,7 @@ pico_set_program_name(embarcatech-g8-sub7-led-matrix "embarcatech-g8-sub7-led-ma
 pico_set_program_version(embarcatech-g8-sub7-led-matrix "0.1")
 
 # Generate PIO header
-pico_generate_pio_header(embarcatech-g8-sub7-led-matrix ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
+pico_generate_pio_header(embarcatech-g8-sub7-led-matrix ${CMAKE_CURRENT_LIST_DIR}/led_matrix.pio)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(embarcatech-g8-sub7-led-matrix 0)
